@@ -59,10 +59,11 @@ Examine `txhousing` in the data viewer. You can accomplish this two different wa
 ::: {.callout-important icon="false" collapse="false" title="Problem 1 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+view(txhousing)
+tail(txhousing, n = 1)
 ```
 
--   Delete this and put your text answer here.
+-   The last city listed in the data set `txhousing` is Wichita Falls.
 :::
 
 ::: {.callout-note icon="false" title="Problem 2"}
@@ -70,7 +71,7 @@ Examine the variable descriptions by typing `?txhousing` in the **console**. Wha
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 2 Answers"}
--   Delete this and put your text answer here.
+-   In this data set, the variable `listings` is the number of total active listings.
 :::
 
 # Data Wrangling Review
@@ -241,7 +242,9 @@ Write a code chunk to remove the inventory variable. Save the results in a data 
 ::: {.callout-important icon="false" collapse="false" title="Problem 3 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+txhousing <- txhousing |>
+  select(-"inventory")
+head(txhousing)
 ```
 :::
 
@@ -256,9 +259,14 @@ txhousing |>
 ::: {.callout-important icon="false" collapse="false" title="Problem 4 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+dallas_sub <- txhousing |>
+  filter(city == "Dallas", year == 2012 | year == 2013)
+dim(dallas_sub)
+head(dallas_sub)
 ```
+- The reason the code given in Problem 4 is incorrect is because of this use of `&` in the code block. This causes the code to group `Dallas` and `2012` to display all 2012 columns for Dallas, then displaying `2013` columns for every city. Replacing `&` with `,` fixes this issue.
 :::
+
 
 ::: {.callout-note icon="false" title="Problem 5"}
 Add a column to the `dallas_sub` data set called `prct_sold` that calculates the percentage of `listings` that were `sold` (`sales/listings * 100`). Be sure to **save** the results into a data frame called `dallas_sub`. Display the last six rows of `dallas_sub`.
@@ -267,7 +275,9 @@ Add a column to the `dallas_sub` data set called `prct_sold` that calculates the
 ::: {.callout-important icon="false" collapse="false" title="Problem 5 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+dallas_sub <- dallas_sub |>
+  mutate(prct_sold = (sales/listings * 100))
+tail(dallas_sub)
 ```
 :::
 
