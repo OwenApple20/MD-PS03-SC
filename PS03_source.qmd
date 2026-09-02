@@ -59,11 +59,10 @@ Examine `txhousing` in the data viewer. You can accomplish this two different wa
 ::: {.callout-important icon="false" collapse="false" title="Problem 1 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-view(txhousing)
-tail(txhousing, n = 1)
+tail(txhousing, n = 1)$city
 ```
 
--   The last city listed in the data set `txhousing` is Wichita Falls.
+-   The last city listed in the data set `txhousing` is **`r tail(txhousing, n = 1)$city`**.
 :::
 
 ::: {.callout-note icon="false" title="Problem 2"}
@@ -71,7 +70,7 @@ Examine the variable descriptions by typing `?txhousing` in the **console**. Wha
 :::
 
 ::: {.callout-important icon="false" collapse="false" title="Problem 2 Answers"}
--   In this data set, the variable `listings` is the number of total active listings.
+-   In this data set, the double variable `listings` is the number of total active listings.
 :::
 
 # Data Wrangling Review
@@ -243,9 +242,10 @@ Write a code chunk to remove the inventory variable. Save the results in a data 
 ```{r}
 # Type your code and comments inside the code chunk
 txhousing <- txhousing |>
-  select(-"inventory")
-head(txhousing)
+  select(-inventory)
+names(txhousing)
 ```
+- After running the code above, the inventory variable was removed.
 :::
 
 ::: {.callout-note icon="false" title="Problem 4"}
@@ -264,7 +264,7 @@ dallas_sub <- txhousing |>
 dim(dallas_sub)
 head(dallas_sub)
 ```
-- The reason the code given in Problem 4 is incorrect is because of this use of `&` in the code block. This causes the code to group `Dallas` and `2012` to display all 2012 columns for Dallas, then displaying `2013` columns for every city. Replacing `&` with `,` fixes this issue.
+- The reason the code given in Problem 4 is incorrect is because of this use of `&` in the code block. This causes the code to group `Dallas` and `2012` together to display all 2012 columns for Dallas or display `2013` columns for every city. Replacing `&` with `,` fixes this issue.
 :::
 
 
@@ -277,6 +277,7 @@ Add a column to the `dallas_sub` data set called `prct_sold` that calculates the
 # Type your code and comments inside the code chunk
 dallas_sub <- dallas_sub |>
   mutate(prct_sold = (sales/listings * 100))
+dim(dallas_sub)
 tail(dallas_sub)
 ```
 :::
@@ -356,10 +357,18 @@ In 2012, in which month were the most houses sold in Texas? Report the month wer
 ::: {.callout-important icon="false" collapse="false" title="Problem 10 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+txhousing |> 
+  filter(year == 2012) |>
+  group_by(month) |>
+  summarize(month_sales = sum(sales)) |>
+  select(month, month_sales) |>
+  arrange(desc(month_sales)) |>
+  head(month_sales, n=1) |>
+  kable()
+  
 ```
 
--   Delete this and put your text answer here.
+-   The 8th of the year was the month with the most houses sold in Texas. There was 29,995 sales that month.
 :::
 
 ::: {.callout-note icon="false" title="Problem 11"}
@@ -369,7 +378,11 @@ Generate a **single** table that shows the total number of houses sold in **Aust
 ::: {.callout-important icon="false" collapse="false" title="Problem 11 Answers"}
 ```{r}
 # Type your code and comments inside the code chunk
-
+txhousing |>
+  filter(city == "Austin"| city == "Dallas", year == 2000 | year == 2001) |>
+  group_by(city) |>
+  summarize(total_sold = sum(sales)) |>
+  kable()
 ```
 :::
 
